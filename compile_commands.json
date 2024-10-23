@@ -1,0 +1,31 @@
+[
+          {
+            "directory": "D:/Projects/c++/chronoflow",
+            "file": "D:/Projects/c++/chronoflow/src/Application.cpp",
+            "command": "cc -MD -MP -DGL_DEBUG -D_CRT_SECURE_NO_WARNINGS -std=c++17 -ID:/Projects/c++/chronoflow/src -ID:/Projects/c++/chronoflow/packages/glfw/include -ID:/Projects/c++/chronoflow/packages/imgui -ID:/Projects/c++/chronoflow/packages/lunasvg/include -ID:/Projects/c++/chronoflow/packages/spdlog/include -m64 -O2 /MP /utf-8 -o D:/Projects/c++/chronoflow/bin/obj/Release/Application.o -MF D:/Projects/c++/chronoflow/bin/obj/Release/Application.d -c D:/Projects/c++/chronoflow/src/Application.cpp"
+          }
+,
+          {
+            "directory": "D:/Projects/c++/chronoflow",
+            "file": "D:/Projects/c++/chronoflow/src/ImageTexture.cpp",
+            "command": "cc -MD -MP -DGL_DEBUG -D_CRT_SECURE_NO_WARNINGS -std=c++17 -ID:/Projects/c++/chronoflow/src -ID:/Projects/c++/chronoflow/packages/glfw/include -ID:/Projects/c++/chronoflow/packages/imgui -ID:/Projects/c++/chronoflow/packages/lunasvg/include -ID:/Projects/c++/chronoflow/packages/spdlog/include -m64 -O2 /MP /utf-8 -o D:/Projects/c++/chronoflow/bin/obj/Release/ImageTexture.o -MF D:/Projects/c++/chronoflow/bin/obj/Release/ImageTexture.d -c D:/Projects/c++/chronoflow/src/ImageTexture.cpp"
+          }
+,
+          {
+            "directory": "D:/Projects/c++/chronoflow",
+            "file": "D:/Projects/c++/chronoflow/src/Log.cpp",
+            "command": "cc -MD -MP -DGL_DEBUG -D_CRT_SECURE_NO_WARNINGS -std=c++17 -ID:/Projects/c++/chronoflow/src -ID:/Projects/c++/chronoflow/packages/glfw/include -ID:/Projects/c++/chronoflow/packages/imgui -ID:/Projects/c++/chronoflow/packages/lunasvg/include -ID:/Projects/c++/chronoflow/packages/spdlog/include -m64 -O2 /MP /utf-8 -o D:/Projects/c++/chronoflow/bin/obj/Release/Log.o -MF D:/Projects/c++/chronoflow/bin/obj/Release/Log.d -c D:/Projects/c++/chronoflow/src/Log.cpp"
+          }
+,
+          {
+            "directory": "D:/Projects/c++/chronoflow",
+            "file": "D:/Projects/c++/chronoflow/src/main.cpp",
+            "command": "cc -MD -MP -DGL_DEBUG -D_CRT_SECURE_NO_WARNINGS -std=c++17 -ID:/Projects/c++/chronoflow/src -ID:/Projects/c++/chronoflow/packages/glfw/include -ID:/Projects/c++/chronoflow/packages/imgui -ID:/Projects/c++/chronoflow/packages/lunasvg/include -ID:/Projects/c++/chronoflow/packages/spdlog/include -m64 -O2 /MP /utf-8 -o D:/Projects/c++/chronoflow/bin/obj/Release/main.o -MF D:/Projects/c++/chronoflow/bin/obj/Release/main.d -c D:/Projects/c++/chronoflow/src/main.cpp"
+          }
+,
+          {
+            "directory": "D:/Projects/c++/chronoflow",
+            "file": "D:/Projects/c++/chronoflow/src/pch.cpp",
+            "command": "cc -MD -MP -DGL_DEBUG -D_CRT_SECURE_NO_WARNINGS -std=c++17 -ID:/Projects/c++/chronoflow/src -ID:/Projects/c++/chronoflow/packages/glfw/include -ID:/Projects/c++/chronoflow/packages/imgui -ID:/Projects/c++/chronoflow/packages/lunasvg/include -ID:/Projects/c++/chronoflow/packages/spdlog/include -m64 -O2 /MP /utf-8 -o D:/Projects/c++/chronoflow/bin/obj/Release/pch.o -MF D:/Projects/c++/chronoflow/bin/obj/Release/pch.d -c D:/Projects/c++/chronoflow/src/pch.cpp"
+          }
+]
