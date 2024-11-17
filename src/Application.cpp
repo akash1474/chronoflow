@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "GLFW/glfw3.h"
 #include "imgui.h"
+#include "implot.h"
 #include "Timer.h"
 #include "Log.h"
 #include "Application.h"
 #include <csignal>
+#include <ctime>
 #include <filesystem>
+#include <gl/gl.h>
 #include <shellapi.h>
 #include <stdio.h>
 #include <winuser.h>
@@ -20,11 +23,36 @@
 #include "resources/FontAwesomeSolid.embed"
 #include "utils.h"
 #undef min
+#include "CoreSystem.h"
+
+void Application::CenterWindow(){
+	GLFWwindow* window=Get().mWindow;
+    if (!window) return;
+
+    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    if (!primaryMonitor) {
+        GL_CRITICAL("Failed to get primary monitor!");
+        return;
+    }
+
+    const GLFWvidmode* videoMode = glfwGetVideoMode(primaryMonitor);
+    if (!videoMode) {
+        GL_CRITICAL("Failed to get video mode!");
+        return;
+    }
 
 
-bool Application::Init(std::string appName)
+    int centerX = (videoMode->width - Get().width) / 2;
+    int centerY = (videoMode->height - Get().height) / 2;
+
+    glfwSetWindowPos(window, centerX, centerY);
+}
+
+
+bool Application::Init(std::string appName,int width,int height)
 {
 	OpenGL::ScopedTimer timer("Application::Init");
+	Get().SetSize(width, height);
 
 #ifdef GL_DEBUG
 	OpenGL::Log::Init();
@@ -36,8 +64,11 @@ bool Application::Init(std::string appName)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
 	glfwWindowHint(GLFW_SCALE_TO_MONITOR, 1);
 
-	Get().mWindow = glfwCreateWindow(Get().width, Get().height, appName.c_str(), NULL, NULL);
-	glfwSetWindowSizeLimits(Get().mWindow, 380, 500, GLFW_DONT_CARE, GLFW_DONT_CARE);
+
+	Get().mWindow = glfwCreateWindow(Get().width,Get().height, appName.c_str(), NULL, NULL);
+	glfwSetWindowSize(Get().mWindow,Get().width,Get().height);
+
+	glfwSetWindowSizeLimits(Get().mWindow, 480, 650, GLFW_DONT_CARE, GLFW_DONT_CARE);
 	if (!Get().mWindow) {
 		glfwTerminate();
 		return false;
@@ -47,8 +78,14 @@ bool Application::Init(std::string appName)
 	GL_INFO("OPENGL - {}", (const char*)glGetString(GL_VERSION));
 	HWND WinHwnd = glfwGetWin32Window(Application::GetGLFWwindow());
 	BOOL USE_DARK_MODE = true;
-	BOOL SET_IMMERSIVE_DARK_MODE_SUCCESS =
-	    SUCCEEDED(DwmSetWindowAttribute(WinHwnd, DWMWINDOWATTRIBUTE::DWMWA_USE_IMMERSIVE_DARK_MODE, &USE_DARK_MODE, sizeof(USE_DARK_MODE)));
+	BOOL SET_IMMERSIVE_DARK_MODE_SUCCESS = SUCCEEDED(
+		DwmSetWindowAttribute(
+			WinHwnd, 
+			DWMWINDOWATTRIBUTE::DWMWA_USE_IMMERSIVE_DARK_MODE, 
+			&USE_DARK_MODE, 
+			sizeof(USE_DARK_MODE)
+		)
+	);
 
 
 	return true;
@@ -81,6 +118,7 @@ bool Application::InitImGui()
 	GL_INFO("ImGui Init");
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	// ImGui::GetStyle().ScaleAllSizes(0.5f);
 
@@ -117,7 +155,7 @@ float GetFontSize()
 {
 	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-	float baseSize = 11.0f;
+	float baseSize = 12.0f;
 	float scaleFactor = 0.007f;
 	float fontSize = baseSize + std::min(screenWidth, screenHeight) * scaleFactor;
 	return fontSize;
@@ -140,21 +178,9 @@ void Application::InitFonts()
 	const float font_size = GetFontSize();
 	// io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\segoeui.ttf",font_size+3,&font_config);
 	io.Fonts->AddFontFromMemoryTTF((void*)JetBrainsMonoNLRegular, IM_ARRAYSIZE(JetBrainsMonoNLRegular), font_size + 2, &font_config);
-	io.Fonts->AddFontFromMemoryTTF((void*)FontAwesomeSolid, IM_ARRAYSIZE(FontAwesomeSolid), (font_size + 4.0f) * 2.0f / 3.0f, &icon_config,
-	                               icons_ranges);
-}
+	io.Fonts->AddFontFromMemoryTTF((void*)FontAwesomeSolid, IM_ARRAYSIZE(FontAwesomeSolid), (font_size + 4.0f) * 2.0f / 3.0f, &icon_config, icons_ranges);
 
-void Application::CenterWindowOnScreen()
-{
-	int horizontal = 0;
-	int vertical = 0;
-	RECT desktop;
-	const HWND hDesktop = GetDesktopWindow();
-	GetWindowRect(hDesktop, &desktop);
-	horizontal = desktop.right;
-	vertical = desktop.bottom;
-	// Get().GetCoreState()->position=ImVec2((horizontal - Get().GetCoreState()->width) * 0.5f, (vertical - Get().GetCoreState()->height) *
-	// 0.5f); glfwSetWindowPos(Get().mWindow,(int)Get().GetCoreState()->position.x,(int)Get().GetCoreState()->position.y);
+	io.Fonts->AddFontFromMemoryTTF((void*)JetBrainsMonoNLRegular, IM_ARRAYSIZE(JetBrainsMonoNLRegular), font_size + 15, &font_config);
 }
 
 void Application::BackupDataBeforeCrash()
@@ -175,14 +201,9 @@ void Application::BackupDataBeforeCrash()
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+	GL_WARN("WindowResize:({},{})",width,height);
 	glViewport(0, 0, width, height);
-	// if(width==0 && height==0){
-	// 	GL_INFO("SLEEPING");
-	// 	Application::Get().SetIsSleeping(true);
-	// }else{
-	// 	if(Application::IsSleeping()) Application::SetIsSleeping(false);
-	// }
-	glViewport(0, 0, width, height);
+	Application::Get().SetSize(width, height);
 	Application::Get().Draw();
 }
 
@@ -198,6 +219,26 @@ void Application::Draw()
 	ImGui::NewFrame();
 	glfwSetDropCallback(Get().mWindow, drop_callback);
 
+	// static TextEditor editor;
+	// static bool isLoaded=false;
+	// if(!isLoaded){
+	// 	size_t size{0};
+	// 	std::ifstream t("D:/Projects/c++/txedit/src/TextEditor.cpp");
+
+	// 	std::string filedata;
+	// 	t.seekg(0, std::ios::end);
+	// 	size = t.tellg();
+	// 	filedata.resize(size, ' ');
+	// 	t.seekg(0);
+	// 	t.read(&filedata[0], size);
+	// 	editor.SetText(filedata);
+	// 	editor.SetReadOnly(false);
+	// 	isLoaded=true;
+	// }
+
+	// editor.Render("Main.cpp");
+	static CoreSystem mCoreSystem;
+	mCoreSystem.Render();
 
 	// if(Application::IsSleeping()){
 	// 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -213,11 +254,9 @@ void Application::Draw()
 	// }
 	// HWND WinHwnd=glfwGetWin32Window(Application::GetGLFWwindow());
 
-	ImGui::ShowDemoWindow();
+	// ImGui::ShowDemoWindow();
 	ImGui::Render();
 	int display_w, display_h;
-	glfwGetFramebufferSize(Get().mWindow, &display_w, &display_h);
-	glViewport(0, 0, display_w, display_h);
 	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glfwSetFramebufferSizeCallback(Get().mWindow, framebuffer_size_callback);
@@ -242,6 +281,7 @@ void Application::Destroy()
 #endif
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+	ImPlot::DestroyContext();
 
 	glfwDestroyWindow(GetGLFWwindow());
 	glfwTerminate();

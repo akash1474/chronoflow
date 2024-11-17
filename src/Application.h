@@ -1,12 +1,15 @@
 #include "GLFW/glfw3.h"
 #include <future>
+#include "imgui.h"
+
 
 class Application
 {
 private:
 	GLFWwindow* mWindow{0};
-	int width = 1100;
-	int height = 650;
+	int width;
+	int height;
+
 
 public:
 	Application(const Application&) = delete;
@@ -19,11 +22,14 @@ public:
 	}
 
 	static void Draw();
-	static bool Init(std::string appName);
+	static bool Init(std::string appName,int width,int height);
 	static bool InitImGui();
 	static void InitFonts();
 	static void SetApplicationIcon(unsigned char* img, int length);
+	static void CenterWindow();
 	void BackupDataBeforeCrash(); // Unimplemented still working but making a commit
+	ImVec2 GetSize(){return ImVec2{(float)Get().width,(float)Get().height};}
+	void SetSize(int width,int height){Get().width=width;Get().height=height;}
 
 	static void HandleCrash(int signal);
 	static void SetupSystemSignalHandling();
@@ -33,7 +39,6 @@ public:
 
 	static void Destroy();
 	static void HandleArguments(std::wstring args);
-	static void CenterWindowOnScreen();
 	static GLFWwindow* GetGLFWwindow() { return Get().mWindow; }
 
 

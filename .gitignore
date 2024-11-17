@@ -10,6 +10,7 @@ bin/
 !packages/lunasvg/premake5.lua
 !packages/tree-sitter-cpp/premake5.lua
 !packages/tree-sitter/premake5.lua
+!packages/implot/premake5.lua
 packages/mINI
 packages/spdlog
 *.sln

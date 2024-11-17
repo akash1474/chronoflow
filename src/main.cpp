@@ -1,12 +1,13 @@
-#include "Application.h"
 #include "pch.h"
+#include "Application.h"
 #include "resources/AppIcon.embed"
 
 int main(int argc, char* argv[])
 {
 	OpenGL::Timer timer;
-	if (!Application::Init("ChronoFlow"))
+	if (!Application::Init("ChronoFlow",480,750))
 		return -1;
+	Application::CenterWindow();
 	Application::SetupSystemSignalHandling();
 	Application::SetApplicationIcon(AppIcon, IM_ARRAYSIZE(AppIcon));
 

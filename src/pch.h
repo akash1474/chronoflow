@@ -36,7 +36,9 @@
 #include <GL/gl.h>
 
 #define TAGLIB_STATIC
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
+#endif
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #ifdef GL_USE_OPENGL_LATEST 
